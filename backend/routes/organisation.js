@@ -87,5 +87,39 @@ router.post("/signup",async(req,res)=>{
     }
 });
 
+const loginBody = zod.object({
+    email:z.string().email(),
+    password:zstring(),
+    phone:z.string(),
+    registrationNumber:z.string()
+})
+
+router.post("/login",async(req,res)=>{
+    const { success } = loginBody.safeParse(req.body);
+    if(!success){
+        return res.status(400).json({
+            message:"Invalid inputs"
+        })
+    }
+
+    const organisation = await Organistation.findOne({
+        email:req.body.email,
+        password:req.body.password,
+        phone:req.body.phone,
+        registrationNumber:req.body.registrationNumber
+    });
+
+    if(organisation){
+        const token = jwt.sign({
+            id:organistaion._id,role:"Organisation"
+        },JWT_secret,{expiresIn:"7d"})
+
+        return res.json({
+            token:token
+        });
+        return;
+    }
+})
+
 module.exports= router;
 
