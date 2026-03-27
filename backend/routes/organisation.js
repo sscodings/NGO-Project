@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const router = express.Router();
 import { Need,User,Organistation } from "../db";
 import { JWT_secret } from "../config";
+import { authenticate } from "../Middlewares";
 
 const signUpBody = zod.object({
     name: z.string().min(3),
@@ -119,7 +120,105 @@ router.post("/login",async(req,res)=>{
         });
         return;
     }
+});
+
+const needSchema = z.object({
+    title: z.string(),
+    description: z.string(),
+    category: z.enum(["Volunteer", "Donation", "Event", "Other"]),
+
+    location: z
+        .object({
+        city: z.string(),
+        state: z.string(),
+        })
+        .optional(),
+
+    skillsRequired: z.array(z.string()),
+
+    requiredCount: z.number(),
+
+    deadline: z.string(),
 })
+
+router.post("/create",authenticate,async (req,res)=>{
+    try{
+        const result = needSchema.safeParse(req.body);
+        if(!result.success){
+            return res.status(400).json({
+                message:"Invalid inputs"
+            })
+        }
+        const data = result.data;
+
+        const need = new Need({
+            ...data,
+            organisation:req.User.id,
+            deadline:data.deadline
+        });
+
+        await need.save();
+
+        res.status(201).json({
+            message:"Need created successfully"
+        });
+    }catch(err){
+        res.status(500).json({
+            message:"Server error"
+        })
+    }
+}); 
+
+
+router.post("/needs/:needId/applicant/:userId",authenticate,async(req,res)=>{
+    try{
+        const orgId = req.user.id;
+        const { needId,userId } = req.params;
+        const { status }=req.body;
+
+        const needs = await Need.findById(needId);
+
+        if(!needs){
+            return res.status(400).json({
+                message:"Need does'nt exist"
+            })
+        }
+
+        if(needs.organisation.toString() != orgId){
+            return res.status(400).json({
+                message:"Need doesn't belongs to this organistaion"
+            })
+        }
+
+        const applicant = needs.applicants.find(
+            (app)=>app.user.toString()===userId
+        )
+
+        if(!apllicant){
+            return res.status(400).json({
+                message:"User has not applied"
+            })
+        }
+
+        applicant.status = status;
+        await needs.save();
+
+        if(status = "accepted"){
+            await User.findByIdAndUpdate(userId,{
+                $addToSet:{completedNeeds:needId}
+            });
+        }
+
+        return res.status(200).json({
+            message:"Applicant Successfully reviewd"
+        })
+    }catch(err){
+        return res.status(500).json({
+            message:"Error occured"
+        })
+    }
+})
+
 
 module.exports= router;
 

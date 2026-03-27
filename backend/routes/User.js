@@ -5,7 +5,7 @@ import { Need, User } from "../db";
 const router = express.Router();
 import { JWT_secret } from "../config";
 import { authenticate } from "../Middlewares";
-
+const mongoose = require("mongoose");
 
 const signupBody = zod.object({
     name:zod.string(),
@@ -133,6 +133,37 @@ router.post("/apply/:needId",authenticate,async(req,res)=>{
     
 
 });
+
+router.get("/all",authenticate,async(req,res)=>{
+    try{
+        const search = req.query;
+
+        let query={};
+        if(search){
+            query = {
+                $or:[
+                    {title:{$regex:search , $options:"i"}},
+                    {description:{$regex:search , $options:"i"}},
+                    {skillsRequired:{$regex:search,$options:"i"}},
+                ]
+
+            }
+
+            
+        }
+
+        const needs = await Need.find(query)
+        .populate("organization","name")
+        .sort({createdAt:-1});
+
+
+        return res.status(200).json(needs);
+    }catch(err){
+        return res.status(400).json({
+            message:"Cannot fetch needs"
+        })
+    }
+})
 
 
 
