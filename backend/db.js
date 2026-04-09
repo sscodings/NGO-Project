@@ -1,10 +1,4 @@
-const express = require("express");
 const mongoose = require("mongoose");
-const { date, lowercase, boolean } = require("zod");
-const { required } = require("zod/mini");
-const app = express();
-
-app.use(express.json());
 
 mongoose.connect("mongodb+srv://sscodings:ssrockstar.11@sscodings.mvywr1x.mongodb.net/NGO");
 
@@ -27,7 +21,7 @@ const OrganistationSchema = new mongoose.Schema({
     description:String,
     type:{
         type:String,
-        enum:["Education","HealthCare","Environment","Animal welfare","Other"],
+        enum:["Education","Healthcare","Environment","Animal Welfare","Other"],
         default:"Other"
     },
     address:{
@@ -36,7 +30,7 @@ const OrganistationSchema = new mongoose.Schema({
         state:String,
         country:{
             type:String,
-            default:India
+            default:"India"
         },
         pincode:String,
     },
@@ -58,11 +52,11 @@ const OrganistationSchema = new mongoose.Schema({
     needs:[
         {
             type:mongoose.Schema.Types.ObjectId,
-            ref:"Need,"
+            ref:"Need"
         },
     ],
     createdAt:{
-        type:date,
+        type:Date,
         default:Date.now,
     },
 },{timestamps:true})
@@ -139,12 +133,12 @@ const NeedsSchema = new mongoose.Schema({
 
 });
 
-const Organistation = mongoose.model('Organisation',OrganistationSchema);
+const Organisation = mongoose.model('Organisation',OrganistationSchema);
 const User = mongoose.model('User',userSchema);
 const Need = mongoose.model('Need',NeedsSchema);
 
 module.exports = {
-    Organistation,
+    Organisation,
     User,
     Need
 };
