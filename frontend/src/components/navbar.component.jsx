@@ -54,15 +54,30 @@ const Navbar = () => {
         {/* Right Buttons */}
         <div className="flex items-center gap-4">
 
-          <Link to="/signin" className="text-gray-700 font-medium">
+          {/* Test Buttons */}
+          <Link 
+            to="/user-dashboard" 
+            className="border-2 border-blue-600 text-blue-600 px-4 py-2 rounded-full font-bold hover:bg-blue-600 hover:text-white transition-all"
+          >
+            Test User
+          </Link>
+
+          <Link 
+            to="/ngo-dashboard" 
+            className="border-2 border-purple-600 text-purple-600 px-4 py-2 rounded-full font-bold hover:bg-purple-600 hover:text-white transition-all"
+          >
+            Test NGO
+          </Link>
+
+          <Link to="/signin" className="text-gray-700 font-medium ml-4">
             Login
           </Link>
 
           <Link
             to="/signup"
-            className="bg-blue-600 text-gray px-4 py-2 rounded-lg font-medium"
+            className="bg-black text-white px-6 py-3 rounded-full font-medium"
           >
-            Sign Up
+            Join Us
           </Link>
 
           {/* Profile */}
