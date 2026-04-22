@@ -7,7 +7,7 @@
 
 @layer components {
     * {
-        @apply m-0 p-0 box-border text-base outline-purple/30 duration-100;
+        @apply m-0 p-0 box-border outline-purple/30 duration-100;
     }
 
     html{
@@ -86,11 +86,11 @@
         @apply text-black border-r-2 border-black pl-6 bg-grey/50 -ml-6 md:rounded-tl-lg md:rounded-bl-lg max-md:border-none;
     }
 
-    #textEditor h2, h2{
+    #textEditor h2 {
         @apply font-inter text-4xl leading-normal font-bold max-md:text-3xl max-md:leading-snug !important;
     }
 
-    #textEditor h3, h3 {
+    #textEditor h3 {
         @apply font-inter text-3xl leading-loose max-md:text-2xl max-md:leading-normal !important;
     }
 
